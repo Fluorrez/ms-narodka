@@ -1,0 +1,1449 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Montessori mateřská škola – Prachatice</title>
+<script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Baloo+2:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --pink:    #FFB3C6;
+    --orange:  #FFCFA8;
+    --yellow:  #FFF0A0;
+    --green:   #B8EDCC;
+    --blue:    #A8D8F0;
+    --violet:  #CDB4F8;
+    --pink-d:  #e8829e;
+    --orange-d:#e89050;
+    --yellow-d:#d4b800;
+    --green-d: #3db870;
+    --blue-d:  #3a9fcf;
+    --violet-d:#8b52e8;
+    --bg: #FAFBFF;
+    --text: #2D2D3A;
+    --text-soft: #6B6B82;
+    --sidebar-w: 248px;
+    --sidebar-collapsed: 64px;
+    --card-radius: 18px;
+    --transition: 0.35s cubic-bezier(.4,0,.2,1);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    display: flex;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ===== SIDEBAR ===== */
+  .sidebar {
+    width: var(--sidebar-w);
+    min-height: 100vh;
+    background: white;
+    border-right: 2px solid #F0F0F8;
+    display: flex;
+    flex-direction: column;
+    padding: 20px 14px 20px;
+    position: fixed;
+    left: 0; top: 0; bottom: 0;
+    z-index: 100;
+    box-shadow: 4px 0 24px rgba(0,0,0,0.04);
+    transition: width var(--transition), transform var(--transition);
+    overflow: hidden;
+    overflow-y: auto;
+  }
+
+  .sidebar.collapsed { width: var(--sidebar-collapsed); }
+
+  /* Smooth collapse transitions for text elements */
+  .logo-name, .logo-sub {
+    transition: opacity var(--transition), max-height var(--transition);
+    max-height: 60px;
+    overflow: hidden;
+  }
+
+  .sidebar.collapsed .logo-name,
+  .sidebar.collapsed .logo-sub {
+    opacity: 0;
+    max-height: 0;
+    pointer-events: none;
+  }
+
+  .sidebar-footer {
+    transition: opacity var(--transition), max-height var(--transition);
+    max-height: 120px;
+    overflow: hidden;
+  }
+
+  .sidebar.collapsed .sidebar-footer {
+    opacity: 0;
+    max-height: 0;
+    pointer-events: none;
+  }
+
+  .sidebar.collapsed .nav-label-text,
+  .sidebar.collapsed .toggle-label {
+    opacity: 0; width: 0; overflow: hidden; pointer-events: none; flex-shrink: 0;
+  }
+
+  /* Keep nav items same height, just center the icon */
+  .sidebar.collapsed .nav-item {
+    justify-content: center;
+    gap: 0;
+    padding: 9px 0;
+    /* Remove rectangular border highlight when collapsed — only icon bg matters */
+    background: transparent !important;
+    border-color: transparent !important;
+  }
+
+  /* When collapsed, show active state only via icon ring */
+  .sidebar.collapsed .nav-item.active .nav-icon,
+  .sidebar.collapsed .nav-item:hover .nav-icon {
+    box-shadow: 0 0 0 2.5px var(--text);
+  }
+
+  .sidebar.collapsed .logo-area { align-items: center; }
+
+  /* Toggle button collapsed: shrink to icon only, centered */
+  .sidebar.collapsed .toggle-btn {
+    justify-content: center;
+    padding: 7px 0;
+    width: 100%;
+  }
+
+  .logo-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 20px;
+  }
+
+  .logo-icon {
+    width: 52px; height: 52px;
+    background: linear-gradient(135deg, var(--pink) 0%, var(--violet) 50%, var(--blue) 100%);
+    border-radius: 16px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 26px;
+    box-shadow: 0 5px 18px rgba(205,180,248,0.4);
+    flex-shrink: 0;
+    cursor: pointer;
+    transition: transform var(--transition), box-shadow var(--transition);
+  }
+
+  .logo-icon:hover {
+    transform: scale(1.07);
+    box-shadow: 0 8px 24px rgba(205,180,248,0.55);
+  }
+
+  .logo-name {
+    font-family: 'Baloo 2', cursive;
+    font-size: 13.5px; font-weight: 800;
+    color: var(--text); text-align: center;
+    line-height: 1.25; white-space: nowrap;
+  }
+
+  .logo-sub {
+    font-size: 11px; color: var(--text-soft);
+    text-align: center; font-weight: 600; white-space: nowrap;
+  }
+
+  /* ===== TOGGLE BUTTON ===== */
+  .toggle-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 10px;
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 13.5px; font-weight: 700;
+    color: var(--text-soft);
+    background: none;
+    border: 2px solid transparent;
+    width: 100%;
+    height: 48px;
+    margin-bottom: 2px;
+    transition: all var(--transition);
+    white-space: nowrap;
+    overflow: hidden;
+    box-sizing: border-box;
+  }
+
+  .toggle-btn:hover { background: #F8F8FC; color: var(--text); border-color: #F0F0F8; }
+
+  .toggle-icon {
+    width: 30px; height: 30px;
+    border-radius: 9px;
+    background: #E4E4EF;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px;
+    flex-shrink: 0;
+    transition: transform var(--transition);
+  }
+
+  /* When collapsed, arrow rotates to point right */
+  .sidebar.collapsed .toggle-icon {
+    transform: rotate(180deg);
+  }
+
+  /* Collapsed: center toggle-btn like other nav items */
+  .sidebar.collapsed .toggle-btn {
+    justify-content: center;
+    padding: 9px 0;
+    border-color: transparent !important;
+    background: transparent !important;
+  }
+
+  .toggle-label { transition: opacity var(--transition); overflow: hidden; }
+
+  /* ===== NAV ===== */
+  .nav-section-label {
+    font-size: 10px; font-weight: 800;
+    letter-spacing: 1.1px; text-transform: uppercase;
+    color: var(--text-soft);
+    padding: 0 8px; margin: 10px 0 5px;
+    white-space: nowrap;
+    transition: opacity var(--transition), height var(--transition), margin var(--transition), padding var(--transition);
+    height: 16px;
+    overflow: hidden;
+  }
+
+  .sidebar.collapsed .nav-section-label {
+    height: 0; margin: 0; padding: 0; opacity: 0;
+  }
+
+  .nav-item {
+    display: flex; align-items: center;
+    gap: 10px; padding: 9px 10px;
+    border-radius: 12px; cursor: pointer;
+    font-size: 13.5px; font-weight: 700;
+    color: var(--text-soft);
+    transition: all var(--transition);
+    text-decoration: none; margin-bottom: 2px;
+    border: 2px solid transparent;
+    white-space: nowrap;
+    /* Fixed height ensures collapsed icons stay at same vertical position */
+    height: 48px;
+    box-sizing: border-box;
+  }
+
+  .nav-item .nav-icon {
+    width: 30px; height: 30px;
+    border-radius: 9px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 15px;
+    transition: all var(--transition);
+    flex-shrink: 0;
+  }
+
+  .nav-label-text { transition: opacity var(--transition); overflow: hidden; }
+
+  .nav-item:hover { color: var(--text); }
+  .nav-item.active { color: var(--text); font-weight: 800; }
+
+  .nav-item[data-page="home"].active, .nav-item[data-page="home"]:hover   { background: #fff4f0; border-color: var(--orange); }
+  .nav-item[data-page="home"] .nav-icon { background: var(--orange); }
+  .nav-item[data-page="ms"].active, .nav-item[data-page="ms"]:hover       { background: #faf0f8; border-color: var(--violet); }
+  .nav-item[data-page="ms"] .nav-icon { background: var(--violet); }
+  .nav-item[data-page="ds"].active, .nav-item[data-page="ds"]:hover       { background: #f0f9ff; border-color: var(--blue); }
+  .nav-item[data-page="ds"] .nav-icon { background: var(--blue); }
+  .nav-item[data-page="bezinka"].active, .nav-item[data-page="bezinka"]:hover { background: #f5fff8; border-color: var(--green); }
+  .nav-item[data-page="bezinka"] .nav-icon { background: var(--green); }
+  .nav-item[data-page="kontakt"].active, .nav-item[data-page="kontakt"]:hover { background: #fff5f0; border-color: var(--pink); }
+  .nav-item[data-page="kontakt"] .nav-icon { background: var(--pink); }
+  .nav-item[data-page="rodicovska"].active, .nav-item[data-page="rodicovska"]:hover { background: #f8f5ff; border-color: var(--violet); }
+  .nav-item[data-page="rodicovska"] .nav-icon { background: var(--violet); }
+
+  /* Collapsed: colored ring matches each page accent */
+  .sidebar.collapsed .nav-item[data-page="home"].active .nav-icon,
+  .sidebar.collapsed .nav-item[data-page="home"]:hover .nav-icon  { box-shadow: 0 0 0 2.5px var(--orange-d); }
+  .sidebar.collapsed .nav-item[data-page="ms"].active .nav-icon,
+  .sidebar.collapsed .nav-item[data-page="ms"]:hover .nav-icon    { box-shadow: 0 0 0 2.5px var(--violet-d); }
+  .sidebar.collapsed .nav-item[data-page="ds"].active .nav-icon,
+  .sidebar.collapsed .nav-item[data-page="ds"]:hover .nav-icon    { box-shadow: 0 0 0 2.5px var(--blue-d); }
+  .sidebar.collapsed .nav-item[data-page="bezinka"].active .nav-icon,
+  .sidebar.collapsed .nav-item[data-page="bezinka"]:hover .nav-icon { box-shadow: 0 0 0 2.5px var(--green-d); }
+  .sidebar.collapsed .nav-item[data-page="kontakt"].active .nav-icon,
+  .sidebar.collapsed .nav-item[data-page="kontakt"]:hover .nav-icon { box-shadow: 0 0 0 2.5px var(--pink-d); }
+  .sidebar.collapsed .nav-item[data-page="rodicovska"].active .nav-icon,
+  .sidebar.collapsed .nav-item[data-page="rodicovska"]:hover .nav-icon { box-shadow: 0 0 0 2.5px var(--violet-d); }
+
+  /* ===== SIDEBAR FOOTER ===== */
+  .sidebar-footer {
+    margin-top: auto;
+    padding-top: 14px;
+    border-top: 2px solid #F0F0F8;
+    transition: opacity var(--transition);
+  }
+
+  .address-card {
+    background: linear-gradient(135deg, #fff9f0, #fff0f9);
+    border-radius: 14px; padding: 12px;
+    font-size: 12px; color: var(--text-soft);
+    line-height: 1.6; font-weight: 600;
+    border: 1.5px solid #f0e0f0;
+    cursor: pointer; transition: all var(--transition);
+  }
+
+  .address-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(200,160,220,0.2);
+    border-color: var(--violet);
+  }
+
+  .address-card .addr-title {
+    font-size: 11px; font-weight: 800;
+    text-transform: uppercase; letter-spacing: 0.8px;
+    color: var(--text); margin-bottom: 4px;
+  }
+
+  /* ===== MAIN CONTENT ===== */
+  .main {
+    margin-left: var(--sidebar-w);
+    flex: 1; min-height: 100vh;
+    transition: margin-left var(--transition);
+  }
+
+  .main.collapsed { margin-left: var(--sidebar-collapsed); }
+
+  .page {
+    display: none;
+    animation: pageIn 0.4s cubic-bezier(.4,0,.2,1);
+    min-height: 100vh;
+    padding: 40px 48px;
+  }
+
+  .page.active { display: block; }
+
+  @keyframes pageIn {
+    from { opacity: 0; transform: translateY(14px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ===== HERO ===== */
+  .hero {
+    border-radius: 28px; padding: 52px 48px;
+    margin-bottom: 36px; position: relative; overflow: hidden;
+  }
+
+  .hero::before {
+    content: ''; position: absolute; inset: 0;
+    opacity: 0.12;
+    background-image: radial-gradient(circle, #fff 1.5px, transparent 1.5px);
+    background-size: 24px 24px;
+  }
+
+  /* Home: orange gradient to match home nav icon */
+  .hero-home    { background: linear-gradient(135deg, var(--orange) 0%, var(--yellow) 60%, var(--green) 100%); }
+  /* MS: violet gradient to match MS nav icon */
+  .hero-ms      { background: linear-gradient(135deg, var(--violet) 0%, var(--pink) 60%, var(--blue) 100%); }
+  /* DS: blue unchanged */
+  .hero-ds      { background: linear-gradient(135deg, var(--blue) 0%, var(--green) 60%, var(--yellow) 100%); }
+  /* Bezinka: green unchanged */
+  .hero-bezinka { background: linear-gradient(135deg, var(--green) 0%, var(--yellow) 60%, var(--orange) 100%); }
+  /* Kontakt: pink gradient to match kontakt nav icon */
+  .hero-kontakt { background: linear-gradient(135deg, var(--pink) 0%, var(--orange) 60%, var(--yellow) 100%); }
+
+  .hero-emoji {
+    font-size: 52px; line-height: 1;
+    margin-bottom: 14px; display: block;
+  }
+
+  .hero-title {
+    font-family: 'Baloo 2', cursive;
+    font-size: 38px; font-weight: 800;
+    color: var(--text); line-height: 1.15;
+    margin-bottom: 10px;
+    text-shadow: 0 2px 12px rgba(255,255,255,0.5);
+  }
+
+  .hero-sub {
+    font-size: 15.5px; font-weight: 700;
+    color: rgba(45,45,58,0.72);
+    max-width: 520px; line-height: 1.5;
+  }
+
+  .badge {
+    display: inline-flex; align-items: center;
+    background: rgba(255,255,255,0.7);
+    backdrop-filter: blur(4px);
+    border-radius: 50px; padding: 5px 13px;
+    font-size: 13px; font-weight: 800;
+    color: var(--text);
+    margin-top: 16px; margin-right: 6px;
+    border: 1.5px solid rgba(255,255,255,0.9);
+  }
+
+  /* ===== HOME PROGRAM CARDS ===== */
+  .home-program-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 20px; margin-bottom: 32px;
+  }
+
+  .program-card {
+    background: white; border-radius: 22px;
+    padding: 30px 26px; border: 2px solid #F0F0F8;
+    cursor: pointer;
+    transition: transform var(--transition), box-shadow var(--transition), border-color var(--transition);
+    position: relative; overflow: hidden;
+  }
+
+  .program-card::before {
+    content: ''; position: absolute;
+    top: 0; left: 0; right: 0; height: 5px;
+    border-radius: 22px 22px 0 0;
+  }
+
+  .program-card.pc-orange::before { background: linear-gradient(90deg, var(--orange), var(--yellow)); }
+  .program-card.pc-violet::before { background: linear-gradient(90deg, var(--violet), var(--pink)); }
+  .program-card.pc-blue::before   { background: linear-gradient(90deg, var(--blue), var(--green)); }
+  .program-card.pc-green::before  { background: linear-gradient(90deg, var(--green), var(--yellow)); }
+
+  .program-card:hover { transform: translateY(-6px); }
+  .program-card.pc-orange:hover { border-color: var(--orange-d); box-shadow: 0 18px 44px rgba(232,144,80,0.14); }
+  .program-card.pc-violet:hover { border-color: var(--violet-d); box-shadow: 0 18px 44px rgba(139,82,232,0.14); }
+  .program-card.pc-blue:hover   { border-color: var(--blue-d);   box-shadow: 0 18px 44px rgba(58,159,207,0.14); }
+  .program-card.pc-green:hover  { border-color: var(--green-d);  box-shadow: 0 18px 44px rgba(61,184,112,0.14); }
+
+  .program-card-icon {
+    width: 50px; height: 50px; border-radius: 15px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px; margin-bottom: 14px;
+  }
+
+  .pci-orange { background: var(--orange); }
+  .pci-violet { background: var(--violet); }
+  .pci-blue   { background: var(--blue); }
+  .pci-green  { background: var(--green); }
+
+  .program-card h3 {
+    font-family: 'Baloo 2', cursive;
+    font-size: 18px; font-weight: 800;
+    margin-bottom: 8px; color: var(--text);
+  }
+
+  .program-card p {
+    font-size: 13px; font-weight: 600;
+    color: var(--text-soft); line-height: 1.6; margin-bottom: 16px;
+  }
+
+  .age-badge {
+    display: inline-block; font-size: 12px; font-weight: 800;
+    padding: 4px 12px; border-radius: 50px; margin-bottom: 14px;
+  }
+
+  .ab-orange { background: var(--orange); color: var(--text); }
+  .ab-violet { background: var(--violet); color: var(--text); }
+  .ab-blue   { background: var(--blue);   color: var(--text); }
+  .ab-green  { background: var(--green);  color: var(--text); }
+
+  .btn-link {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 13px; font-weight: 800;
+    color: var(--text-soft); text-decoration: none;
+    transition: all var(--transition);
+  }
+
+  .program-card:hover .btn-link { color: var(--text); gap: 10px; }
+
+  /* ===== SECTION TITLE ===== */
+  .section-title {
+    font-family: 'Baloo 2', cursive;
+    font-size: 20px; font-weight: 800;
+    margin-bottom: 16px; color: var(--text);
+  }
+
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 26px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 26px; }
+
+  /* ===== CARDS ===== */
+  .card {
+    border-radius: var(--card-radius); padding: 20px;
+    border: 2px solid #F0F0F8;
+    transition: transform var(--transition), box-shadow var(--transition), border-color var(--transition);
+  }
+
+  .card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(0,0,0,0.08); }
+
+  .card.pink   { border-color: var(--pink);   background: #fff6f8; }
+  .card.blue   { border-color: var(--blue);   background: #f5fbff; }
+  .card.green  { border-color: var(--green);  background: #f4fff8; }
+  .card.yellow { border-color: var(--yellow); background: #fffdf0; }
+  .card.orange { border-color: var(--orange); background: #fff9f5; }
+  .card.violet { border-color: var(--violet); background: #f9f5ff; }
+
+  .card:hover.pink   { border-color: var(--pink-d);   box-shadow: 0 12px 32px rgba(255,100,140,0.12); }
+  .card:hover.blue   { border-color: var(--blue-d);   box-shadow: 0 12px 32px rgba(58,159,207,0.12); }
+  .card:hover.green  { border-color: var(--green-d);  box-shadow: 0 12px 32px rgba(61,184,112,0.12); }
+  .card:hover.yellow { border-color: var(--yellow-d); box-shadow: 0 12px 32px rgba(212,184,0,0.12); }
+  .card:hover.orange { border-color: var(--orange-d); box-shadow: 0 12px 32px rgba(232,144,80,0.12); }
+  .card:hover.violet { border-color: var(--violet-d); box-shadow: 0 12px 32px rgba(139,82,232,0.12); }
+
+  .card-icon  { font-size: 26px; margin-bottom: 10px; display: block; }
+  .card-title { font-family: 'Baloo 2', cursive; font-size: 15.5px; font-weight: 700; margin-bottom: 6px; color: var(--text); }
+  .card-body  { font-size: 13px; line-height: 1.6; color: var(--text-soft); font-weight: 600; }
+
+  /* ===== INFO CHIPS ===== */
+  .info-row { display: flex; gap: 10px; margin-bottom: 12px; flex-wrap: wrap; }
+
+  .info-chip {
+    display: flex; align-items: center;
+    background: white; border: 2px solid #F0F0F8;
+    border-radius: 50px; padding: 7px 13px;
+    font-size: 12.5px; font-weight: 700; color: var(--text);
+    transition: all var(--transition);
+  }
+
+  .info-chip:hover { transform: scale(1.03); }
+
+  /* ===== PROGRAM TABLE ===== */
+  .program-table {
+    background: white; border-radius: var(--card-radius);
+    border: 2px solid #F0F0F8; overflow: hidden; margin-bottom: 26px;
+  }
+
+  .program-row {
+    display: flex; align-items: center;
+    padding: 12px 20px; border-bottom: 1.5px solid #F8F8FC;
+    transition: background var(--transition); gap: 14px;
+  }
+
+  .program-row:last-child { border-bottom: none; }
+  .program-row:hover { background: #FAFBFF; }
+
+  .program-time { font-family: 'Baloo 2', cursive; font-weight: 800; font-size: 14px; color: var(--text); min-width: 104px; }
+  .program-dot  { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+  .program-desc { font-size: 13px; font-weight: 600; color: var(--text-soft); flex: 1; }
+
+  /* ===== HIGHLIGHT BOXES ===== */
+  .highlight-box {
+    border-radius: 16px; padding: 20px 24px; margin-bottom: 16px;
+    font-size: 14px; font-weight: 700; line-height: 1.65;
+  }
+
+  .pink-bg   { background: var(--pink);   color: var(--text); }
+  .blue-bg   { background: var(--blue);   color: var(--text); }
+  .green-bg  { background: var(--green);  color: var(--text); }
+  .yellow-bg { background: var(--yellow); color: var(--text); }
+  .violet-bg { background: var(--violet); color: var(--text); }
+  .orange-bg { background: var(--orange); color: var(--text); }
+
+  /* ===== CONTACT ===== */
+  .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 26px; }
+
+  .contact-big-card {
+    background: white; border-radius: 22px; padding: 26px;
+    border: 2px solid #F0F0F8; transition: all var(--transition);
+  }
+
+  .contact-big-card:hover { transform: translateY(-3px); box-shadow: 0 10px 28px rgba(0,0,0,0.07); }
+  .contact-big-card .icon-big { font-size: 34px; margin-bottom: 10px; display: block; }
+  .contact-big-card h3 { font-family: 'Baloo 2', cursive; font-size: 16px; font-weight: 800; margin-bottom: 6px; }
+  .contact-big-card p  { font-size: 13px; font-weight: 600; color: var(--text-soft); line-height: 1.55; }
+  .contact-big-card a  { color: var(--text); text-decoration: none; font-weight: 800; }
+
+  .map-placeholder {
+    background: linear-gradient(135deg, var(--orange), var(--pink));
+    border-radius: 22px; height: 180px;
+    display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 8px;
+    border: 2px solid var(--orange); margin-bottom: 26px;
+    color: var(--text); font-weight: 700; font-size: 14.5px;
+    position: relative; overflow: hidden; cursor: pointer;
+    transition: all var(--transition);
+  }
+
+  .map-placeholder:hover { transform: scale(1.01); box-shadow: 0 10px 28px rgba(0,0,0,0.1); }
+  .map-placeholder::before { content: ''; position: absolute; inset: 0; background: rgba(255,255,255,0.22); }
+  .map-placeholder span { position: relative; z-index: 1; }
+
+  /* ===== VALUES ROW ===== */
+  .values-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 28px; }
+
+  .value-pill {
+    display: flex; align-items: center; gap: 7px;
+    background: white; border-radius: 50px; padding: 9px 16px;
+    font-size: 13px; font-weight: 800; color: var(--text);
+    border: 2px solid #F0F0F8; transition: all var(--transition);
+  }
+
+  .value-pill:hover { transform: translateY(-2px); box-shadow: 0 5px 16px rgba(0,0,0,0.07); }
+  .value-pill span { font-size: 17px; }
+
+  /* ===== MOBILE ===== */
+
+  /* Hamburger button – outside sidebar, always visible on mobile */
+  .hamburger {
+    display: none;
+    position: fixed; top: 14px; left: 14px; z-index: 300;
+    width: 42px; height: 42px;
+    background: white; border: 2px solid #F0F0F8;
+    border-radius: 12px; cursor: pointer;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+    flex-direction: column; align-items: center; justify-content: center;
+    gap: 5px; padding: 0;
+  }
+
+  .hamburger span {
+    display: block;
+    width: 20px; height: 2px;
+    background: var(--text);
+    border-radius: 2px;
+    transition: transform 0.3s ease, opacity 0.3s ease, width 0.3s ease;
+    transform-origin: center;
+  }
+
+  /* Animate to X when open */
+  .hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .hamburger.open span:nth-child(2) { opacity: 0; width: 0; }
+  .hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+  /* Dim overlay behind sidebar */
+  .sidebar-overlay {
+    display: none;
+    position: fixed; inset: 0; z-index: 99;
+    background: rgba(0,0,0,0.35);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--transition);
+  }
+
+  .sidebar-overlay.visible { opacity: 1; pointer-events: auto; }
+
+  @media (max-width: 768px) {
+    /* Sidebar slides in from left, desktop toggle hidden */
+    .sidebar {
+      transform: translateX(-100%);
+      width: var(--sidebar-w) !important;
+      overflow-y: auto;
+      overscroll-behavior: contain; /* prevents scroll bleeding to page */
+    }
+    .sidebar.open { transform: translateX(0); }
+
+    /* Hide the desktop collapse toggle on mobile */
+    .toggle-btn { display: none !important; }
+
+    .main { margin-left: 0 !important; }
+    .hamburger { display: flex; }
+    .sidebar-overlay { display: block; }
+
+    .page { padding: 68px 18px 40px; } /* top padding to clear hamburger */
+    .grid-2, .grid-3, .home-program-grid, .contact-grid { grid-template-columns: 1fr; }
+    .hero { padding: 32px 22px; }
+    .hero-title { font-size: 26px; }
+    .hero-emoji { font-size: 38px; }
+    .login-card { padding: 28px 18px; margin: 0 0 40px; }
+    .login-input { font-size: 16px; } /* prevents iOS zoom on focus */
+    .logged-header { flex-direction: column; align-items: flex-start; gap: 14px; }
+    .logout-btn { width: 100%; text-align: center; }
+  }
+
+  /* ===== STAGGER ===== */
+  .stagger > * {
+    opacity: 0; transform: translateY(18px);
+    animation: cardIn 0.38s ease forwards;
+  }
+  .stagger > *:nth-child(1) { animation-delay: 0.04s; }
+  .stagger > *:nth-child(2) { animation-delay: 0.09s; }
+  .stagger > *:nth-child(3) { animation-delay: 0.14s; }
+  .stagger > *:nth-child(4) { animation-delay: 0.19s; }
+  .stagger > *:nth-child(5) { animation-delay: 0.24s; }
+  .stagger > *:nth-child(6) { animation-delay: 0.29s; }
+
+  @keyframes cardIn { to { opacity: 1; transform: translateY(0); } }
+</style>
+</head>
+<body>
+
+<!-- Overlay (mobile) -->
+<div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
+
+<!-- Hamburger (mobile) -->
+<button class="hamburger" id="hamburger" onclick="toggleMobile()" title="Menu" aria-label="Menu">
+  <span></span>
+  <span></span>
+  <span></span>
+</button>
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+  <div class="logo-area">
+    <div class="logo-icon" onclick="navigate('home')" title="Zpět na hlavní stránku">🌱</div>
+    <div class="logo-name">Montessori<br>mateřská škola</div>
+    <div class="logo-sub">Prachatice</div>
+  </div>
+
+  <!-- Toggle button: arrow ◀ points left when open (will close), rotates to point right when closed -->
+  <button class="toggle-btn" onclick="toggleSidebar()">
+    <div class="toggle-icon">◀</div>
+    <span class="toggle-label">Skrýt panel</span>
+  </button>
+
+  <div class="nav-section-label">Hlavní stránka</div>
+  <a class="nav-item active" data-page="home" onclick="navigate('home')">
+    <div class="nav-icon">🏠</div>
+    <span class="nav-label-text">Vítejte</span>
+  </a>
+
+  <div class="nav-section-label">Naše programy</div>
+  <a class="nav-item" data-page="ms" onclick="navigate('ms')">
+    <div class="nav-icon">🏫</div>
+    <span class="nav-label-text">Mateřská škola</span>
+  </a>
+  <a class="nav-item" data-page="ds" onclick="navigate('ds')">
+    <div class="nav-icon">🧸</div>
+    <span class="nav-label-text">Dětská skupina</span>
+  </a>
+  <a class="nav-item" data-page="bezinka" onclick="navigate('bezinka')">
+    <div class="nav-icon">🌿</div>
+    <span class="nav-label-text">Bezinka pro nejmenší</span>
+  </a>
+
+  <div class="nav-section-label">Informace</div>
+  <a class="nav-item" data-page="kontakt" onclick="navigate('kontakt')">
+    <div class="nav-icon">📍</div>
+    <span class="nav-label-text">Kontakt</span>
+  </a>
+  <a class="nav-item" data-page="rodicovska" onclick="navigate('rodicovska')">
+    <div class="nav-icon">🔐</div>
+    <span class="nav-label-text">Rodičovská zóna</span>
+  </a>
+
+  <div class="sidebar-footer">
+    <div class="address-card" onclick="window.open('https://maps.google.com/?q=Národní+1018,+Prachatice', '_blank')" title="Otevřít v Google Maps">
+      <div class="addr-title">📍 Adresa</div>
+      Národní 1018<br>
+      383 01 Prachatice
+    </div>
+  </div>
+</aside>
+
+<!-- MAIN CONTENT -->
+<main class="main" id="main">
+
+  <!-- PAGE: HOME -->
+  <div class="page active" id="page-home">
+    <!-- Hero: orange = matches home 🏠 nav icon color -->
+    <div class="hero hero-home">
+      <span class="hero-emoji">🏠</span>
+      <h1 class="hero-title">Montessori mateřská škola</h1>
+      <p class="hero-sub">Radostné místo, kde se děti učí vlastním tempem, objevují svět a rozkvetou do plného potenciálu.</p>
+      <div>
+        <span class="badge">📍 Národní 1018, Prachatice</span>
+        <span class="badge">🌈 Montessori přístup</span>
+      </div>
+    </div>
+
+    <div class="section-title">Naše programy</div>
+    <div class="home-program-grid stagger">
+      <div class="program-card pc-violet" onclick="navigate('ms')">
+        <div class="program-card-icon pci-violet">🏫</div>
+        <span class="age-badge ab-violet">3 – 6 let</span>
+        <h3>Mateřská škola</h3>
+        <p>Montessori třída pro předškoláky. Vzdělávání hrou, svoboda volby, péče o přírodu a rozvoj samostatnosti.</p>
+        <span class="btn-link">Zjistit více →</span>
+      </div>
+      <div class="program-card pc-blue" onclick="navigate('ds')">
+        <div class="program-card-icon pci-blue">🧸</div>
+        <span class="age-badge ab-blue">2,5 – 6 let</span>
+        <h3>Dětská skupina</h3>
+        <p>Alternativa školky s malým kolektivem a individuální péčí. Rodinná atmosféra pro nejmenší průzkumníky.</p>
+        <span class="btn-link">Zjistit více →</span>
+      </div>
+      <div class="program-card pc-green" onclick="navigate('bezinka')">
+        <div class="program-card-icon pci-green">🌿</div>
+        <span class="age-badge ab-green">1 – 3 roky</span>
+        <h3>Bezinka pro nejmenší</h3>
+        <p>Pravidelná páteční setkání pro děti s rodiči. Inspirativní aktivity a komunita pro celou rodinu.</p>
+        <span class="btn-link">Zjistit více →</span>
+      </div>
+    </div>
+
+    <div class="section-title">Proč Montessori?</div>
+    <div class="values-row">
+      <div class="value-pill"><span>🌿</span> Respekt k dítěti</div>
+      <div class="value-pill"><span>🔍</span> Přirozená zvídavost</div>
+      <div class="value-pill"><span>🖐</span> Učení rukama</div>
+      <div class="value-pill"><span>📋</span> Jasná pravidla</div>
+      <div class="value-pill"><span>🌱</span> Vlastní tempo</div>
+      <div class="value-pill"><span>🤝</span> Smíšené věkové skupiny</div>
+    </div>
+
+    <div class="grid-3 stagger">
+      <div class="card orange">
+        <div class="card-icon">🌸</div>
+        <div class="card-title">Připravené prostředí</div>
+        <div class="card-body">Učebna je navržena tak, aby děti motivovala k samostatnému bádání a objevování bez direktivního vedení.</div>
+      </div>
+      <div class="card violet">
+        <div class="card-icon">👩‍🏫</div>
+        <div class="card-title">Průvodkyně, ne učitelka</div>
+        <div class="card-body">Naši pedagogové provázejí, nabízejí a podporují – místo přednášení a testování.</div>
+      </div>
+      <div class="card green">
+        <div class="card-icon">🌍</div>
+        <div class="card-title">Celostní rozvoj</div>
+        <div class="card-body">Péče o rozum, tělo i duši. Práce s přírodou, uměním, matematikou i jazykem v propojených celcích.</div>
+      </div>
+    </div>
+
+    <div class="highlight-box orange-bg">
+      Chcete se přijít podívat? Rádi vás provedeme školkou a zodpovíme všechny vaše otázky. Kontaktujte nás a domluvíme termín návštěvy!
+    </div>
+  </div>
+
+  <!-- PAGE: MATEŘSKÁ ŠKOLA -->
+  <div class="page" id="page-ms">
+    <!-- Hero: violet = matches MS 🏫 nav icon color -->
+    <div class="hero hero-ms">
+      <span class="hero-emoji">🏫</span>
+      <h1 class="hero-title">Mateřská škola</h1>
+      <p class="hero-sub">Bezpečné, láskyplné místo, kde děti rostou, tvoří a objevují svět Montessori metodou.</p>
+      <div>
+        <span class="badge">3 – 6 let</span>
+        <span class="badge">Po–Pá</span>
+        <span class="badge">7:00 – 16:00</span>
+      </div>
+    </div>
+
+    <div class="section-title">O naší školce</div>
+    <div class="highlight-box violet-bg">
+      Naše mateřská škola nabízí dětem od 3 do 6 let přátelské, Montessori podnětné prostředí. Děti si svobodně volí práci z připravených materiálů, učí se vlastním tempem a přirozeně rozvíjejí samostatnost, soustředění a radost z učení.
+    </div>
+
+    <div class="section-title">Co děti u nás zažijí</div>
+    <div class="grid-3 stagger">
+      <div class="card violet">
+        <div class="card-icon">🎨</div>
+        <div class="card-title">Tvoření & umění</div>
+        <div class="card-body">Malování, modelování, výtvarné projekty a rukodělné aktivity pro rozvoj kreativity a jemné motoriky.</div>
+      </div>
+      <div class="card pink">
+        <div class="card-icon">🌿</div>
+        <div class="card-title">Příroda & pohyb</div>
+        <div class="card-body">Pravidelné vycházky, zahrada, péče o rostliny a sportovní aktivity venku jsou součástí každého dne.</div>
+      </div>
+      <div class="card blue">
+        <div class="card-icon">📖</div>
+        <div class="card-title">Čtení & jazyk</div>
+        <div class="card-body">Pohádky, říkanky a rozvoj řeči v klidné atmosféře. Montessori materiály pro přípravu na čtení a psaní.</div>
+      </div>
+      <div class="card green">
+        <div class="card-icon">🎵</div>
+        <div class="card-title">Hudba & rytmus</div>
+        <div class="card-body">Zpívání, hudební nástroje, rytmická cvičení a taneční chvilky pro radost i rozvoj.</div>
+      </div>
+      <div class="card yellow">
+        <div class="card-icon">🔢</div>
+        <div class="card-title">Matematika rukama</div>
+        <div class="card-body">Montessori matematické materiály umožňují dětem pochopit čísla a operace fyzickým zážitkem.</div>
+      </div>
+      <div class="card orange">
+        <div class="card-icon">🤝</div>
+        <div class="card-title">Sociální dovednosti</div>
+        <div class="card-body">Spolupráce, respekt a komunikace v smíšené věkové skupině – přirozený model fungování komunity.</div>
+      </div>
+    </div>
+
+    <div class="section-title">Denní program</div>
+    <div class="program-table">
+      <div class="program-row"><span class="program-time">7:00 – 8:30</span><span class="program-dot" style="background:var(--violet)"></span><span class="program-desc">Příchod dětí, volná práce s Montessori materiály</span></div>
+      <div class="program-row"><span class="program-time">8:30 – 9:00</span><span class="program-dot" style="background:var(--pink)"></span><span class="program-desc">Ranní kruh, komunitní setkání, sdílení</span></div>
+      <div class="program-row"><span class="program-time">9:00 – 9:20</span><span class="program-dot" style="background:var(--yellow)"></span><span class="program-desc">Svačina</span></div>
+      <div class="program-row"><span class="program-time">9:20 – 11:30</span><span class="program-dot" style="background:var(--green)"></span><span class="program-desc">Volná práce, řízené aktivity, pobyt venku</span></div>
+      <div class="program-row"><span class="program-time">11:30 – 12:00</span><span class="program-dot" style="background:var(--blue)"></span><span class="program-desc">Oběd</span></div>
+      <div class="program-row"><span class="program-time">12:00 – 14:30</span><span class="program-dot" style="background:var(--orange)"></span><span class="program-desc">Odpočinek / klidné aktivity pro nespáče</span></div>
+      <div class="program-row"><span class="program-time">14:30 – 16:00</span><span class="program-dot" style="background:var(--violet)"></span><span class="program-desc">Odpolední svačina, volná hra, odchody</span></div>
+    </div>
+
+    <div class="section-title">Důležité informace</div>
+    <div class="info-row">
+      <div class="info-chip">Věk: 3–6 let</div>
+      <div class="info-chip">Max. 25 dětí ve třídě</div>
+      <div class="info-chip">Stravování zajištěno</div>
+      <div class="info-chip">Zápis každý rok na jaře</div>
+    </div>
+    <div class="highlight-box yellow-bg">
+      Zápis do mateřské školy probíhá každoročně v jarních měsících. Pro aktuální informace o volných místech a podmínkách přijetí nás neváhejte kontaktovat.
+    </div>
+  </div>
+
+  <!-- PAGE: DĚTSKÁ SKUPINA -->
+  <div class="page" id="page-ds">
+    <div class="hero hero-ds">
+      <span class="hero-emoji">🧸</span>
+      <h1 class="hero-title">Dětská skupina</h1>
+      <p class="hero-sub">Alternativa školky pro děti od 2,5 roku – útulné, rodinné prostředí s péčí na míru.</p>
+      <div>
+        <span class="badge">2,5 – 6 let</span>
+        <span class="badge">Malý kolektiv</span>
+        <span class="badge">Individuální péče</span>
+      </div>
+    </div>
+
+    <div class="section-title">Co je dětská skupina?</div>
+    <div class="highlight-box blue-bg">
+      Dětská skupina je alternativa mateřské školy pro děti od 2,5 do 6 let. Nabízí menší kolektiv, více individuální péče a flexibilnější docházku. Prostředí je inspirováno Montessori přístupem – připravené pro samostatné bádání i klidnou hru.
+    </div>
+
+    <div class="grid-2 stagger">
+      <div class="card blue">
+        <div class="card-icon">👶</div>
+        <div class="card-title">Pro nejmenší</div>
+        <div class="card-body">Přijímáme děti již od 2,5 roku věku. Pečovatelé jsou plně proškoleni pro péči o batolata a nejmenší.</div>
+      </div>
+      <div class="card green">
+        <div class="card-icon">🌱</div>
+        <div class="card-title">Malý kolektiv</div>
+        <div class="card-body">Maximálně 12 dětí, díky čemuž dostane každé dítě dostatek pozornosti a péče.</div>
+      </div>
+      <div class="card yellow">
+        <div class="card-icon">⏱</div>
+        <div class="card-title">Flexibilní docházka</div>
+        <div class="card-body">Docházku lze přizpůsobit potřebám rodiny. Rádi se domluvíme na konkrétních požadavcích.</div>
+      </div>
+      <div class="card pink">
+        <div class="card-icon">🏡</div>
+        <div class="card-title">Rodinná atmosféra</div>
+        <div class="card-body">Prostředí, kde se děti cítí jako doma – bezpečné, láskyplné a podnětné.</div>
+      </div>
+    </div>
+
+    <div class="section-title">Program pro nejmenší</div>
+    <div class="grid-3 stagger">
+      <div class="card orange"><div class="card-icon">🖐</div><div class="card-title">Senzorické hry</div><div class="card-body">Hmatové, zrakové i sluchové podněty pro rozvoj smyslů dítěte.</div></div>
+      <div class="card blue"><div class="card-icon">🎶</div><div class="card-title">Říkanky & písničky</div><div class="card-body">Hudba a pohybové říkanky, které děti milují a podporují jejich rozvoj.</div></div>
+      <div class="card green"><div class="card-icon">🌳</div><div class="card-title">Venku každý den</div><div class="card-body">Pobyt na čerstvém vzduchu, v zahradě nebo při procházkách je pro nás priorita.</div></div>
+    </div>
+
+    <div class="section-title">Podmínky přijetí</div>
+    <div class="info-row">
+      <div class="info-chip">Věk: 2,5–6 let</div>
+      <div class="info-chip">Max. 12 dětí</div>
+      <div class="info-chip">Písemná smlouva</div>
+      <div class="info-chip">Očkování dle vyhlášky</div>
+    </div>
+    <div class="highlight-box green-bg">
+      Pro bližší informace o volných místech, podmínkách a financování nás prosím kontaktujte telefonicky nebo e-mailem. Rádi vám vše vysvětlíme a provedeme vás celým procesem přijetí.
+    </div>
+  </div>
+
+  <!-- PAGE: BEZINKA -->
+  <div class="page" id="page-bezinka">
+    <div class="hero hero-bezinka">
+      <span class="hero-emoji">🌿</span>
+      <h1 class="hero-title">Bezinka pro nejmenší</h1>
+      <p class="hero-sub">Inspirativní setkávání pro děti s rodiči – první krůčky do světa Montessori.</p>
+      <div>
+        <span class="badge">1 – 3 roky</span>
+        <span class="badge">S rodičem</span>
+        <span class="badge">Pravidelná páteční setkání</span>
+      </div>
+    </div>
+
+    <div class="section-title">Co je Bezinka?</div>
+    <div class="highlight-box green-bg">
+      Bezinka je pravidelné páteční setkávání pro děti ve věku 1 až 3 let spolu s rodiči nebo prarodiči, v čase 9:00 – 10:30 formou školního kroužku. Cílem je podpora samostatnosti a zodpovědnosti dítěte v přátelské Montessori atmosféře.
+    </div>
+
+    <div class="grid-2 stagger">
+      <div class="card yellow">
+        <div class="card-icon">👨‍👩‍👦</div>
+        <div class="card-title">Rodiče vítáni</div>
+        <div class="card-body">Rodiče, prarodiče nebo opatrovníci jsou přítomni po celou dobu. Setkání jsou příležitostí i pro vás.</div>
+      </div>
+      <div class="card pink">
+        <div class="card-icon">🧠</div>
+        <div class="card-title">Podnětné aktivity</div>
+        <div class="card-body">Každé setkání přináší aktivity zaměřené na smyslový a motorický rozvoj dítěte.</div>
+      </div>
+    </div>
+
+    <div class="section-title">Typické aktivity</div>
+    <div class="grid-3 stagger">
+      <div class="card blue"><div class="card-icon">🖐</div><div class="card-title">Senzorické aktivity</div><div class="card-body">Hmatové zážitky, různé textury a materiály pro rozvoj smyslů.</div></div>
+      <div class="card orange"><div class="card-icon">🌿</div><div class="card-title">Příroda & venku</div><div class="card-body">Příležitost i pro venkovní aktivity na školní zahradě.</div></div>
+      <div class="card violet"><div class="card-icon">☕</div><div class="card-title">Čas pro rodiče</div><div class="card-body">Prostor pro setkání, kávu a sdílení zkušeností s ostatními rodinami.</div></div>
+    </div>
+
+    <div class="info-row">
+      <div class="info-chip">Věk: 1–3 roky</div>
+      <div class="info-chip">Pravidelné termíny</div>
+      <div class="info-chip">Vstup zdarma / symbolický příspěvek</div>
+    </div>
+    <div class="highlight-box yellow-bg">
+      Aktuální termíny setkání Bezinky najdete na našich nástěnkách nebo se zeptejte přímo u nás. Přijďte se podívat – vždy vás rádi uvítáme!
+    </div>
+  </div>
+
+  <!-- PAGE: KONTAKT -->
+  <div class="page" id="page-kontakt">
+    <!-- Hero: pink = matches kontakt 📍 nav icon color -->
+    <div class="hero hero-kontakt">
+      <span class="hero-emoji">📍</span>
+      <h1 class="hero-title">Kontakt</h1>
+      <p class="hero-sub">Chcete vědět více? Kontaktujte nás.</p>
+    </div>
+
+    <div class="section-title">Kontaktní informace</div>
+    <div class="contact-grid stagger">
+      <div class="contact-big-card" style="border-color:var(--pink); cursor:pointer;" onclick="window.open('https://maps.google.com/?q=Národní+1018,+Prachatice','_blank')" title="Otevřít v Google Maps">
+        <span class="icon-big">📍</span>
+        <h3>Adresa</h3>
+        <p>Národní 1018<br>383 01 Prachatice<br><br><span style="font-size:12px; color:var(--text-soft); font-weight:700;">Otevřít v Google Maps →</span></p>
+      </div>
+      <div class="contact-big-card" style="border-color:var(--orange); cursor:pointer;" onclick="window.location.href='tel:+420000000000'" title="Zavolat">
+        <span class="icon-big">📞</span>
+        <h3>Telefon</h3>
+        <p>Rádi odpovíme na vaše dotazy:<br><br><strong>+420 000 000 000</strong></p>
+      </div>
+      <div class="contact-big-card" style="border-color:var(--yellow); cursor:pointer;" onclick="window.location.href='mailto:info@montessori-prachatice.cz'" title="Napsat e-mail">
+        <span class="icon-big">✉️</span>
+        <h3>E-mail</h3>
+        <p>Na vaše dotazy rádi odpovíme:<br><br><strong>info@montessori-prachatice.cz</strong></p>
+      </div>
+      <div class="contact-big-card" style="border-color:var(--green);">
+        <span class="icon-big">🕐</span>
+        <h3>Provozní doba</h3>
+        <p>Pondělí – Pátek<br><strong>7:00 – 16:00</strong><br><br>O víkendech a svátcích zavřeno.</p>
+      </div>
+    </div>
+
+    <div class="highlight-box pink-bg">
+      Máte otázky ohledně přijetí nebo se chcete přijít podívat? Rádi vás provedeme školkou a odpovíme na vše, co vás zajímá. Neváhejte se ozvat!
+    </div>
+  </div>
+
+  <!-- PAGE: KLIENTSKÁ ZÓNA -->
+  <div class="page" id="page-rodicovska">
+    <div class="hero" style="background: linear-gradient(135deg, var(--violet) 0%, var(--blue) 60%, var(--green) 100%);">
+      <span class="hero-emoji">🔐</span>
+      <h1 class="hero-title">Rodičovská zóna</h1>
+      <p class="hero-sub">Prostor pro rodiče a zákonné zástupce – dokumenty, informace a vše důležité na jednom místě.</p>
+    </div>
+
+    <!-- LOGIN FORM -->
+    <div id="login-panel">
+      <div class="login-card">
+        <div class="login-icon">🔑</div>
+        <div class="login-title">Přihlášení</div>
+        <div class="login-sub">Zadejte své přihlašovací údaje</div>
+
+        <div class="login-field">
+          <label class="login-label" for="login-email">E-mail</label>
+          <input class="login-input" id="login-email" type="email" placeholder="vas@email.cz" autocomplete="email" inputmode="email" />
+        </div>
+        <div class="login-field">
+          <label class="login-label" for="login-password">Heslo</label>
+          <div style="position:relative;">
+            <input class="login-input" id="login-password" type="password" placeholder="heslo" autocomplete="current-password" />
+            <button class="pw-toggle" onclick="togglePw()" title="Zobrazit / skrýt heslo" type="button">👁</button>
+          </div>
+        </div>
+
+        <div class="login-error" id="login-error">Nesprávný e-mail nebo heslo.</div>
+
+        <button class="login-btn" id="login-btn" onclick="doLogin()" type="button">Přihlásit se →</button>
+
+        <div style="text-align:center; margin-top:14px;">
+          <a href="#" onclick="netlifyIdentity.open('recovery'); return false;" style="font-size:12px; font-weight:700; color:var(--text-soft); text-decoration:none; transition:color 0.2s;" onmouseover="this.style.color='var(--violet)'" onmouseout="this.style.color='var(--text-soft)'">Zapomněli jste heslo?</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- LOGGED-IN CONTENT -->
+    <div id="logged-panel" style="display:none;">
+      <div class="logged-header">
+        <div class="logged-welcome">
+          <span id="logged-icon">👋</span>
+          <div>
+            <div class="logged-name" id="logged-name">Vítejte!</div>
+            <div class="logged-role" id="logged-role">rodič</div>
+          </div>
+        </div>
+        <button class="logout-btn" onclick="doLogout()" type="button">Odhlásit se</button>
+      </div>
+
+      <div class="highlight-box violet-bg" style="margin-bottom:28px;">
+        Rodičovská zóna je momentálně v přípravě. Brzy zde najdete přístup k důležitým dokumentům, formulářům a informacím přímo pro vás.
+      </div>
+
+      <div class="section-title">Co zde brzy najdete</div>
+      <div class="grid-3 stagger">
+        <div class="card violet">
+          <div class="card-icon">📄</div>
+          <div class="card-title">Dokumenty</div>
+          <div class="card-body">Smlouvy, souhlasy a formuláře ke stažení přímo zde.</div>
+        </div>
+        <div class="card blue">
+          <div class="card-icon">📅</div>
+          <div class="card-title">Akce & termíny</div>
+          <div class="card-body">Přehled plánovaných akcí, výletů a důležitých termínů.</div>
+        </div>
+        <div class="card green">
+          <div class="card-icon">📬</div>
+          <div class="card-title">Zprávy</div>
+          <div class="card-body">Informace od pedagogů a aktuality ze školky.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<style>
+  /* ===== LOGIN ===== */
+  .login-card {
+    max-width: 420px;
+    margin: 0 auto 40px;
+    background: white;
+    border-radius: 24px;
+    padding: 40px 36px;
+    border: 2px solid var(--violet);
+    box-shadow: 0 12px 40px rgba(205,180,248,0.18);
+  }
+
+  .login-icon {
+    font-size: 40px; text-align: center; margin-bottom: 12px;
+  }
+
+  .login-title {
+    font-family: 'Baloo 2', cursive;
+    font-size: 24px; font-weight: 800;
+    text-align: center; color: var(--text);
+    margin-bottom: 4px;
+  }
+
+  .login-sub {
+    font-size: 13px; font-weight: 600;
+    color: var(--text-soft); text-align: center;
+    margin-bottom: 28px;
+  }
+
+  .login-field { margin-bottom: 18px; }
+
+  .login-label {
+    display: block;
+    font-size: 12px; font-weight: 800;
+    text-transform: uppercase; letter-spacing: 0.8px;
+    color: var(--text-soft); margin-bottom: 7px;
+  }
+
+  .login-input {
+    width: 100%; padding: 12px 16px;
+    border: 2px solid #E8E8F0;
+    border-radius: 12px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 14px; font-weight: 600;
+    color: var(--text);
+    background: #FAFBFF;
+    outline: none;
+    transition: border-color 0.25s, box-shadow 0.25s;
+    box-sizing: border-box;
+  }
+
+  .login-input:focus {
+    border-color: var(--violet);
+    box-shadow: 0 0 0 3px rgba(205,180,248,0.25);
+    background: white;
+  }
+
+  .pw-toggle {
+    position: absolute; right: 10px; top: 50%;
+    transform: translateY(-50%);
+    background: none; border: none; cursor: pointer;
+    font-size: 16px; padding: 4px; opacity: 0.5;
+    transition: opacity 0.2s;
+  }
+
+  .pw-toggle:hover { opacity: 1; }
+
+  .login-error {
+    display: none;
+    background: #fff0f4; border: 1.5px solid var(--pink);
+    border-radius: 10px; padding: 10px 14px;
+    font-size: 13px; font-weight: 700; color: #c0405a;
+    margin-bottom: 16px;
+  }
+
+  .login-btn {
+    width: 100%; padding: 13px;
+    background: linear-gradient(135deg, var(--violet), var(--blue));
+    border: none; border-radius: 12px;
+    font-family: 'Baloo 2', cursive;
+    font-size: 16px; font-weight: 700;
+    color: var(--text); cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    margin-bottom: 18px;
+  }
+
+  .login-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(205,180,248,0.4);
+  }
+
+  .login-btn:active { transform: translateY(0); }
+
+  .login-hint {
+    font-size: 12px; font-weight: 600;
+    color: var(--text-soft); text-align: center;
+    background: #F8F8FC; border-radius: 10px;
+    padding: 10px 14px; line-height: 1.6;
+  }
+
+  /* ===== LOGGED IN ===== */
+  .logged-header {
+    display: flex; align-items: center;
+    justify-content: space-between;
+    background: white; border-radius: 20px;
+    padding: 20px 24px; border: 2px solid var(--violet);
+    margin-bottom: 24px;
+  }
+
+  .logged-welcome {
+    display: flex; align-items: center; gap: 14px;
+    font-size: 28px;
+  }
+
+  .logged-name {
+    font-family: 'Baloo 2', cursive;
+    font-size: 18px; font-weight: 800; color: var(--text);
+  }
+
+  .logged-role {
+    font-size: 12px; font-weight: 700;
+    color: var(--text-soft); text-transform: uppercase;
+    letter-spacing: 0.8px;
+  }
+
+  .logout-btn {
+    background: #fff0f4; border: 2px solid var(--pink);
+    border-radius: 10px; padding: 8px 16px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 13px; font-weight: 800;
+    color: #c0405a; cursor: pointer;
+    transition: all 0.25s;
+  }
+
+  .logout-btn:hover {
+    background: var(--pink); color: var(--text);
+    transform: translateY(-1px);
+  }
+</style>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+  /* ===== NETLIFY IDENTITY AUTH ===== */
+  var loginCooldown = false;
+  var cooldownTimer = null;
+
+  /* Počkáme na načtení Netlify Identity widgetu */
+  window.addEventListener('load', function() {
+    if (typeof netlifyIdentity === 'undefined') return;
+
+    /* Pokud je uživatel již přihlášen (refresh stránky), hned zobrazíme obsah */
+    var existingUser = netlifyIdentity.currentUser();
+    if (existingUser) showLoggedIn(existingUser);
+
+    /* Posloucháme události widgetu */
+    netlifyIdentity.on('login', function(user) {
+      netlifyIdentity.close();
+      showLoggedIn(user);
+    });
+
+    netlifyIdentity.on('logout', function() {
+      showLoggedOut();
+    });
+  });
+
+  function showLoggedIn(user) {
+    var name = (user.user_metadata && user.user_metadata.full_name)
+      ? user.user_metadata.full_name
+      : user.email;
+    document.getElementById('logged-name').textContent = 'Vítejte, ' + name + '!';
+    document.getElementById('logged-role').textContent = user.email;
+    document.getElementById('logged-icon').textContent = '👪';
+    document.getElementById('login-panel').style.display  = 'none';
+    document.getElementById('logged-panel').style.display = 'block';
+  }
+
+  function showLoggedOut() {
+    document.getElementById('logged-panel').style.display = 'none';
+    document.getElementById('login-panel').style.display  = 'block';
+    document.getElementById('login-email').value    = '';
+    document.getElementById('login-password').value = '';
+    document.getElementById('login-error').style.display = 'none';
+  }
+
+  async function doLogin() {
+    if (loginCooldown) return;
+
+    var email    = document.getElementById('login-email').value.trim();
+    var password = document.getElementById('login-password').value;
+    var errorEl  = document.getElementById('login-error');
+
+    errorEl.style.display = 'none';
+
+    if (!email || !password) {
+      showError('Vyplňte prosím e-mail i heslo.');
+      return;
+    }
+
+    var btn = document.getElementById('login-btn');
+    btn.textContent  = 'Přihlašuji…';
+    btn.disabled     = true;
+    btn.style.opacity = '0.7';
+
+    try {
+      /* Netlify Identity REST API – přihlásí uživatele bez widgetu */
+      var siteUrl = window.location.origin;
+      var resp = await fetch(siteUrl + '/.netlify/identity/token', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: 'grant_type=password&username=' + encodeURIComponent(email) + '&password=' + encodeURIComponent(password)
+      });
+
+      if (!resp.ok) {
+        startCooldown('Nesprávný e-mail nebo heslo.');
+        return;
+      }
+
+      var data = await resp.json();
+
+      /* Načteme info o uživateli */
+      var userResp = await fetch(siteUrl + '/.netlify/identity/user', {
+        headers: { 'Authorization': 'Bearer ' + data.access_token }
+      });
+      var user = await userResp.json();
+      user.email = email;
+
+      btn.textContent  = 'Přihlásit se →';
+      btn.disabled     = false;
+      btn.style.opacity = '';
+
+      showLoggedIn(user);
+
+    } catch(e) {
+      startCooldown('Chyba připojení, zkuste to znovu.');
+    }
+  }
+
+  function doLogout() {
+    if (typeof netlifyIdentity !== 'undefined' && netlifyIdentity.currentUser()) {
+      netlifyIdentity.logout();
+    } else {
+      showLoggedOut();
+    }
+  }
+
+  function showError(msg) {
+    var el = document.getElementById('login-error');
+    el.textContent = msg;
+    el.style.display = 'block';
+    el.style.animation = 'none';
+    el.offsetHeight;
+    el.style.animation = 'shake 0.4s ease';
+  }
+
+  function startCooldown(msg) {
+    var btn = document.getElementById('login-btn');
+    loginCooldown = true;
+    var seconds = 5;
+
+    showError(msg);
+
+    btn.disabled = true;
+    btn.textContent = 'Počkejte ' + seconds + ' s…';
+    btn.style.opacity = '0.55';
+    btn.style.cursor = 'not-allowed';
+
+    cooldownTimer = setInterval(function() {
+      seconds--;
+      if (seconds > 0) {
+        btn.textContent = 'Počkejte ' + seconds + ' s…';
+      } else {
+        clearInterval(cooldownTimer);
+        loginCooldown = false;
+        btn.disabled = false;
+        btn.textContent = 'Přihlásit se →';
+        btn.style.opacity = '';
+        btn.style.cursor = '';
+        document.getElementById('login-error').style.display = 'none';
+      }
+    }, 1000);
+  }
+
+  function togglePw() {
+    var inp = document.getElementById('login-password');
+    inp.type = inp.type === 'password' ? 'text' : 'password';
+  }
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter' && document.getElementById('page-rodicovska').classList.contains('active')) {
+      doLogin();
+    }
+  });
+
+  /* ===== MOBILE MENU ===== */
+  function toggleMobile() {
+    var sidebar  = document.getElementById('sidebar');
+    var overlay  = document.getElementById('sidebar-overlay');
+    var burger   = document.getElementById('hamburger');
+    var isOpen   = sidebar.classList.contains('open');
+    if (isOpen) {
+      closeSidebar();
+    } else {
+      sidebar.classList.add('open');
+      overlay.style.display = 'block';
+      // small delay so display:block kicks in before opacity transition
+      requestAnimationFrame(function() {
+        overlay.classList.add('visible');
+      });
+      burger.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+  }
+
+  function closeSidebar() {
+    var overlay = document.getElementById('sidebar-overlay');
+    document.getElementById('sidebar').classList.remove('open');
+    overlay.classList.remove('visible');
+    document.getElementById('hamburger').classList.remove('open');
+    document.body.style.overflow = '';
+    // hide overlay after transition
+    setTimeout(function() {
+      if (!overlay.classList.contains('visible')) {
+        overlay.style.display = 'none';
+      }
+    }, 400);
+  }
+
+  /* ===== NAVIGATION ===== */
+  var sidebarCollapsed = false;
+
+  function navigate(page) {
+    document.querySelectorAll('.nav-item').forEach(function(i) { i.classList.remove('active'); });
+    var navEl = document.querySelector('.nav-item[data-page="' + page + '"]');
+    if (navEl) navEl.classList.add('active');
+
+    document.querySelectorAll('.page').forEach(function(p) { p.classList.remove('active'); });
+    var pg = document.getElementById('page-' + page);
+    if (pg) pg.classList.add('active');
+
+    closeSidebar();
+    window.scrollTo(0, 0);
+  }
+
+  function toggleSidebar() {
+    sidebarCollapsed = !sidebarCollapsed;
+    document.getElementById('sidebar').classList.toggle('collapsed', sidebarCollapsed);
+    document.getElementById('main').classList.toggle('collapsed', sidebarCollapsed);
+  }
+</script>
+
+<style>
+  @keyframes shake {
+    0%,100% 
